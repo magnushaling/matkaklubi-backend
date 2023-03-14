@@ -2,8 +2,6 @@ import express from "express";
 import cors from "cors";
 import pg from "pg";
 
-// Connect to the database using the DATABASE_URL environment
-//   variable injected by Railway
 const pool = new pg.Pool();
 
 const app = express();
@@ -13,7 +11,21 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/treks", async (req, res) => {
-  const { rows } = await pool.query("SELECT * FROM treks;");
+  const columns = req.query.columns;
+  const status = req.query.status;
+  let sql = '';
+  let sqlColumns = '*';
+  let sqlAdditionalFilters = '';
+
+  if (columns !== undefined) {
+    sqlColumns = columns.toString();
+  }
+  if (status !== undefined) {
+    sqlAdditionalFilters +=  `WHERE status="${status}"`
+  }
+
+  sql = `SELECT ${sqlColumns} FROM treks ${sqlAdditionalFilters};`
+  const { rows } = await pool.query(sql);
   res.send(JSON.stringify(rows));
 });
 
