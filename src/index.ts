@@ -39,14 +39,13 @@ app.get("/treks/:trekId", async (req, res) => {
 
 app.post("/treks", async (req, res) => {
   const sql = `
-    INSERT INTO treks
-    SET
-      title='${req.body.title}',
-      description='${req.body.description}',
-      image_url='${req.body.image_url}',
-      duration='${req.body.duration}',
-      status='${req.body.status}
-    WHERE id=${req.params.trekId};
+    INSERT INTO treks (title, description, image_url, duration, status)
+    VALUES
+      ('${req.body.title}',
+      '${req.body.description}',
+      '${req.body.image_url}',
+      '${req.body.duration}',
+      '${req.body.status}')
   `
   console.log(sql);
   const { rows } = await pool.query(sql);
